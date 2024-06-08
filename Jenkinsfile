@@ -14,6 +14,11 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     stages {
+        stage('Clean Workspcae') {
+            steps {
+                cleanWs()
+            }
+        }
         stage('Git Checkout') {
             steps {
                 git branch: 'main', url 'https://github.com/okellomano/podcaster'
