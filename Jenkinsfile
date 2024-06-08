@@ -44,15 +44,28 @@ pipeline {
                 sh "npm install"
             }
         }
-        stage('Trivy FS Scan') {
+        // stage('Trivy FS Scan') {
+        //     steps {
+        //         script {
+        //             sudo docker.image('aquasec/trivy:latest').inside('--network=jenkins') {
+        //                 sh "trivy fs . > trivyfs.txt"
+        //             }
+        //         }
+        //         // sh "trivy fs . > trivyfs.txt"
+        //         // sh 'snyk test'
+        //     }
+        // }
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-                    docker.image('aquasec/trivy:latest').inside('--network=jenkins') {
-                        sh "trivy fs . > trivyfs.txt"
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
                     }
                 }
-                // sh "trivy fs . > trivyfs.txt"
-                // sh 'snyk test'
             }
         }
     }
