@@ -14,12 +14,12 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     stages {
-        stage ('Git Checkout') {
+        stage('Git Checkout') {
             steps {
                 git branch: 'main', url 'https://github.com/okellomano/podcaster'
             }
         }
-        stage ('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
                     sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=podcaster \
@@ -27,19 +27,19 @@ pipeline {
                 }
             }
         }
-        stage ('Quality Gates') {
+        stage('Quality Gates') {
             steps {
                 script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token'
                 }
             }
         }
-        stage ('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 sh "npm install"
             }
         }
-        stage ('Trivy FS Scan') {
+        stage('Trivy FS Scan') {
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
