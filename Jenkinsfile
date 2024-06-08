@@ -19,9 +19,9 @@ pipeline {
                 cleanWs()
             }
         }
-        stage('Git Checkout') {
+        stage('Checkout from Git') {
             steps {
-                git branch: 'main', url 'https://github.com/okellomano/podcaster'
+                git branch: 'main', url: 'https://github.com/okellomano/podcaster'
             }
         }
         stage('SonarQube Analysis') {
