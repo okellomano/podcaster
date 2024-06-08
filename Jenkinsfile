@@ -47,7 +47,7 @@ pipeline {
         stage('Trivy FS Scan') {
             steps {
                 script {
-                    docker.image('aquasec/trivy:latest').inside {
+                    docker.image('aquasec/trivy:latest').inside('--network=jenkins') {
                         sh "trivy fs . > trivyfs.txt"
                     }
                 }
