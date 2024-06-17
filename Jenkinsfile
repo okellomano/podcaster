@@ -44,6 +44,13 @@ pipeline {
                 sh "npm install"
             }
         }
+        stage('Test docker') {
+            steps {
+                sscript {
+                    sh "docker --version"
+                }
+            }
+        }
         stage('Trivy FS Scan') {
             steps {
                 script {
