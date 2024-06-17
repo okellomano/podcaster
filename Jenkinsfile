@@ -27,8 +27,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=podcaster \
-                    -Dsonar.projectKey=podcaster'''
+                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=podcaster-CI \
+                    -Dsonar.projectKey=podcaster-CI'''
                 }
             }
         }
@@ -44,29 +44,29 @@ pipeline {
                 sh "npm install"
             }
         }
-        // stage('Trivy FS Scan') {
-        //     steps {
-        //         script {
-        //             sudo docker.image('aquasec/trivy:latest').inside('--network=jenkins') {
-        //                 sh "trivy fs . > trivyfs.txt"
-        //             }
-        //         }
-        //         // sh "trivy fs . > trivyfs.txt"
-        //         // sh 'snyk test'
-        //     }
-        // }
-        stage('Build and Push Docker Image') {
+        stage('Trivy FS Scan') {
             steps {
                 script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
+                    cddocker.image('aquasec/trivy:latest').inside('--network=jenkins') {
+                        sh "trivy fs . > trivyfs.txt"
                     }
                 }
+                // sh "trivy fs . > trivyfs.txt"
+                // sh 'snyk test'
             }
         }
+        // stage('Build and Push Docker Image') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('',DOCKER_PASS) {
+        //                 docker_image = docker.build "${IMAGE_NAME}"
+        //             }
+        //             docker.withRegistry('',DOCKER_PASS) {
+        //                 docker_image.push("${IMAGE_TAG}")
+        //                 docker_image.push('latest')
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
