@@ -19,6 +19,13 @@ pipeline {
                 cleanWs()
             }
         }
+        stage('Test docker') {
+            steps {
+                script {
+                    sh "docker --version"
+                }
+            }
+        }
         stage('Checkout from Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/okellomano/podcaster'
@@ -42,13 +49,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh "npm install"
-            }
-        }
-        stage('Test docker') {
-            steps {
-                sscript {
-                    sh "docker --version"
-                }
             }
         }
         stage('Trivy FS Scan') {
