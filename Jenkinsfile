@@ -12,6 +12,10 @@ pipeline {
         DOCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+
+        TRIVY_IMAGE = 'aquasec/trivy:latest'
+        SCAN_PATH = '.'
+        RESULT_FILE = 'trivy_fs_scan.txt'
     }
     stages {
         stage('Clean Workspcae') {
@@ -51,15 +55,13 @@ pipeline {
                 sh "npm install"
             }
         }
-        stage('Trivy FS Scan') {
+        stage('Run Trivy FS Scan') {
             steps {
                 script {
-                    docker.image('aquasec/trivy:latest').inside('--network=jenkins') {
-                        sh "trivy fs . > trivyfs.txt"
-                    }
+                    sh """
+                    docker run --rm -v $(pwd):/root ${TRIVY_IMAGE} fs ${SCAN_PATH} > ${RESULT_FILE}
+                    """
                 }
-                // sh "trivy fs . > trivyfs.txt"
-                // sh 'snyk test'
             }
         }
         // stage('Build and Push Docker Image') {
