@@ -58,9 +58,7 @@ pipeline {
         stage('Run Trivy FS Scan') {
             steps {
                 script {
-                    sh """
-                    docker run --rm -v $(pwd):/root ${TRIVY_IMAGE} fs ${SCAN_PATH} > ${RESULT_FILE}
-                    """
+                    sh '''docker run --rm -v $(pwd):/root ${TRIVY_IMAGE} fs ${SCAN_PATH} > ${RESULT_FILE}'''
                 }
             }
         }
